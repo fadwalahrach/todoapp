@@ -6,7 +6,8 @@ class TodoApp extends React.Component{
        super(props)
        this.state = {
            todos: [{id:1, task:'eating', status:true},{id:2, task:'coding', status:true}],
-           toggleStatus: false
+           toggleStatus: false,
+           edit : {id : null, task : ''}
            //to push each task as objects
            // ex: todo = [{id:1, task:'something', status:true}]
        }
@@ -35,22 +36,33 @@ class TodoApp extends React.Component{
        })
    }
 
-   editTodo = (el, id) => {
+   editTodo = (id, task) => {
       
-    let filteredList = this.state.todos.filter(xar => xar.id !== id)
+    // let filteredList = this.state.todos.filter(xar => xar.id !== id)
   
+    // this.setState({
+    //     todos: [...filteredList, 
+    //         {
+    //           id : id,
+    //           task : el.target.value,
+    //           status : false  
+    //     }]
+    // })
+    let updatedTodos = this.state.todos.map(todo => {
+        if(todo.id===id){
+            todo.task = task;
+        }
+        return todo;
+    });
     this.setState({
-        todos: [...filteredList, 
-            {
-                
-        }]
+        todos : updatedTodos,
+        toggleStatus: false,
+        edit : {id : null, task : ''}
     })
-    console.log(id)
    }
 
 
     render(){
-        console.log(this.state.toggleStatus)
         return(
             <>
             <input type='text' ref={this.inputEl}/>
@@ -61,7 +73,8 @@ class TodoApp extends React.Component{
                     <div>{e.id + ' - ' + e.task}
              
                     <div id={this.state.toggleStatus ? '' : 'editing'}>
-                        <input type='text' onChange={(evt)=> this.editTodo(evt, e.id)}></input>
+                        <input type='text' onChange={(evt) => this.setState({edit : {id: e.id , task: evt.target.value}})}/>
+                        <button onClick={() => this.editTodo(this.state.edit.id,this.state.edit.task)}>Update</button>
                     </div>
                         <button onClick={()=> this.removeTodo(e.id)}>Delete</button>
                         <button onClick={()=>this.setState(prevState => ({toggleStatus: !prevState.toggleStatus}))}>Edit</button>
